@@ -1,6 +1,7 @@
 import { Contract, ethers, Signer, type ContractInterface, type ContractTransaction } from 'ethers';
 import abi from '$lib/abi/Whitelist.json';
 import { Constants } from '$lib/helpers/Constants';
+import { Networks } from '$lib/helpers/Networks';
 
 declare const window: any;
 
@@ -58,6 +59,26 @@ export async function connectWallet(): Promise<string> {
     } catch (error) {
         throw error;
     }
+}
+
+export async function getNetwork(): Promise<string> {
+    let network: string;
+
+     try {
+        const { ethereum } = window;
+
+        if (!ethereum) {
+            alert("Make sure you have metamask!");
+            return;
+        }
+
+        const chainId = await ethereum.request({ method: 'eth_chainId'});        
+        network = Networks[chainId];
+    } catch (error) {
+        throw error;
+    }
+
+    return network;
 }
 
 export async function addAddressToWhitelist(): Promise<void> {
