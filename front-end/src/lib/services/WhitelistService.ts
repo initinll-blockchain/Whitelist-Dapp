@@ -81,6 +81,24 @@ export async function getNetwork(): Promise<string> {
     return network;
 }
 
+export async function switchNetwork(): Promise<void> {
+    try {
+        const { ethereum } = window;
+
+        if (ethereum) {
+            await ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x4' }],
+            });
+        }
+        else {
+            alert('MetaMask is not installed. Please install it to use this app: https://metamask.io/download.html');
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function addAddressToWhitelist(): Promise<void> {
     try {
         let whitelistContract = getContract();
