@@ -120,16 +120,16 @@ function getContract(): Contract {
     try {
         const { ethereum } = window;                
         let contractABI: ContractInterface = abi.abi;
-        let coolDomainContract: Contract;
+        let whitelistContract: Contract;
 
         if (ethereum) {
             const provider: ethers.providers.Web3Provider = new ethers.providers.Web3Provider(ethereum);
             const signer: Signer = provider.getSigner();
             let contractAddress: string = getContractAddress();
-            coolDomainContract = new ethers.Contract(contractAddress, contractABI, signer);
-            console.log("CoolDomainContract", coolDomainContract.address);
+            whitelistContract = new ethers.Contract(contractAddress, contractABI, signer);
+            console.log("WhitelistContract", whitelistContract.address);
         }
-        return coolDomainContract;
+        return whitelistContract;
     } catch (error) {
         console.log("getContract", error);
     }
