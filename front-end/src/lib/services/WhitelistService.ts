@@ -81,14 +81,14 @@ export async function getNetwork(): Promise<string> {
     return network;
 }
 
-export async function switchNetwork(): Promise<void> {
+export async function switchNetwork(chainId: string): Promise<void> {
     try {
         const { ethereum } = window;
 
         if (ethereum) {
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x4' }],
+                params: [{ chainId: chainId }],
             });
         }
         else {
@@ -116,7 +116,63 @@ export async function addAddressToWhitelist(): Promise<void> {
     }
 }
 
+export async function numOfAddressesWhitelisted(): Promise<number> {
+    let numOfAddressesWhitelisted: number;
+
+    try {
+        let whitelistContract = getContract();
+
+        if (whitelistContract) {
+            numOfAddressesWhitelisted = await whitelistContract.numOfAddressesWhitelisted();
+        }
+
+    } catch (error) {
+        throw error;
+    }
+
+    return numOfAddressesWhitelisted;
+}
+
+export async function isAddressWhitelisted(address: string): Promise<boolean> {
+    let isAddressWhitelisted: boolean;
+
+    try {
+        const whitelistContract = getContract();
+        const signer: Signer = getSigner();
+
+        if (whitelistContract && signer) {            
+            isAddressWhitelisted = await whitelistContract.whitelistedAddresses(signer.getAddress());
+        }
+
+    } catch (error) {
+        throw error;
+    }
+
+    return isAddressWhitelisted;
+}
+
 function getContract(): Contract {
+    let whitelistContract: Contract;
+
+    try {
+        const signer: Signer = getSigner();
+        let contractABI: ContractInterface = abi.abi;
+        let contractAddress: string = getContractAddress();
+
+        if (signer) {
+            whitelistContract = new ethers.Contract(contractAddress, contractABI, signer);
+            console.log("WhitelistContract", whitelistContract.address);
+        }
+    } catch (error) {
+        console.log("getContract", error);
+    }
+
+    return whitelistContract;
+}
+
+function getSigner(): Signer {
+    let signer: Signer;
+
     try {
         const { ethereum } = window;                
         let contractABI: ContractInterface = abi.abi;
@@ -124,13 +180,11 @@ function getContract(): Contract {
 
         if (ethereum) {
             const provider: ethers.providers.Web3Provider = new ethers.providers.Web3Provider(ethereum);
-            const signer: Signer = provider.getSigner();
-            let contractAddress: string = getContractAddress();
-            whitelistContract = new ethers.Contract(contractAddress, contractABI, signer);
-            console.log("WhitelistContract", whitelistContract.address);
-        }
-        return whitelistContract;
+            signer = provider.getSigner();            
+        }        
     } catch (error) {
         console.log("getContract", error);
     }
+
+    return signer;
 }
