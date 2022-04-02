@@ -74,11 +74,11 @@
 	<div class="main">
 		<div>
 			<h1 class="title">Welcome to Crypto Devs!</h1>
-			<div class="description">Its an NFT collection for developers in Crypto.</div>
-			<div class="description">
-				{numberOfWhitelisted} have already joined the Whitelist
-			</div>
+			<div class="description">Its an NFT collection for developers in Crypto.</div>			
 			{#if account}
+				<div class="description">
+					{numberOfWhitelisted} have already joined the Whitelist
+				</div>
 				{#if joinedWhitelist}
 					<div class="description">
 						Thanks for joining the Whitelist!
